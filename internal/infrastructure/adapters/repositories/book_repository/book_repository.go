@@ -3,11 +3,13 @@ package book_repository
 import (
 	"GoChallenge/internal/core/domain/entity/book"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 var books = []book.Book{
 	{
-		ID:          "1",
+		ID:          uuid.New(),
 		Title:       "Pedro Paramo",
 		Author:      "Juan Rulfo",
 		ISBN:        "",
@@ -24,7 +26,7 @@ func FindAll() []book.Book {
 	return books
 }
 
-func FindById(id string) (book.Book, bool) {
+func FindById(id uuid.UUID) (book.Book, bool) {
 	for _, book := range books {
 		if book.ID == id {
 			return book, true
@@ -32,7 +34,7 @@ func FindById(id string) (book.Book, bool) {
 	}
 
 	notFoundBook := book.Book{
-		ID:          "",
+		ID:          uuid.Nil,
 		Title:       "",
 		Author:      "",
 		ISBN:        "",
@@ -53,7 +55,7 @@ func Create(newBook book.Book) bool {
 	return true
 }
 
-func Update(id string, updatedBook book.Book) bool {
+func Update(id uuid.UUID, updatedBook book.Book) bool {
 	for i, book := range books {
 		if id == book.ID {
 			books[i] = updatedBook
@@ -64,7 +66,7 @@ func Update(id string, updatedBook book.Book) bool {
 	return false
 }
 
-func Delete(id string) bool {
+func Delete(id uuid.UUID) bool {
 	for i, book := range books {
 		if id == book.ID {
 			books = append(books[:i], books[i+1:]...)

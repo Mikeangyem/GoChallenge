@@ -2,10 +2,12 @@ package book_handler
 
 import (
 	"GoChallenge/internal/core/domain/entity/book"
+	"GoChallenge/internal/core/dto"
 	"GoChallenge/internal/core/service/book_service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func GetAll(c *gin.Context) {
@@ -13,7 +15,12 @@ func GetAll(c *gin.Context) {
 }
 
 func GetById(c *gin.Context) {
-	id := c.Param("id")
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
+		return
+	}
+
 	book, wasFound := book_service.GetBookById(id)
 
 	if wasFound {
@@ -24,7 +31,7 @@ func GetById(c *gin.Context) {
 }
 
 func Create(c *gin.Context) {
-	var newBook book.Book
+	var newBook dto.BookDTO
 
 	if err := c.BindJSON(&newBook); err != nil {
 		return
@@ -43,7 +50,12 @@ func Update(c *gin.Context) {
 		return
 	}
 
-	id := c.Param("id")
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
+		return
+	}
+
 	if err := book_service.UpdateBook(id, book); err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": err})
 	} else {
@@ -52,7 +64,12 @@ func Update(c *gin.Context) {
 }
 
 func Delete(c *gin.Context) {
-	id := c.Param("id")
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
+		return
+	}
+
 	if err := book_service.DeleteBook(id); err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": err})
 	} else {
