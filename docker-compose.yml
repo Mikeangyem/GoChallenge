@@ -17,7 +17,7 @@ services:
       - pg_books_data:/var/lib/postgres/data/
 
   books-api:
-    image: gochallenge:latest
+    build: .
     container_name: api.books.com
     environment:
       DATABASE_URL: "host=postgres user=postgres password=postgres dbname=books sslmode=disable"

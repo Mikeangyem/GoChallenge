@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Serve() {
+func Serve(bookHandler *book_handler.BookHandler) {
 	router := gin.Default()
-	router.GET("/books", book_handler.GetAll)
-	router.GET("/books/:id", book_handler.GetById)
-	router.POST("/books", book_handler.Create)
-	router.PUT("/books/:id", book_handler.Update)
-	router.DELETE("/books/:id", book_handler.Delete)
+	router.GET("/books", bookHandler.GetAll)
+	router.GET("/books/:id", bookHandler.GetById)
+	router.POST("/books", bookHandler.Create)
+	router.PUT("/books/:id", bookHandler.Update)
+	router.DELETE("/books/:id", bookHandler.Delete)
 
-	router.Run("localhost:8080")
+	router.Run("0.0.0.0:8080")
 }

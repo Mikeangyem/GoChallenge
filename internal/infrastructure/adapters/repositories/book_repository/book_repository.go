@@ -2,12 +2,12 @@ package book_repository
 
 import (
 	"GoChallenge/internal/core/domain/entity/book"
-	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
-var books = []book.Book{
+/*var books = []book.Book{
 	{
 		ID:          uuid.New(),
 		Title:       "Pedro Paramo",
@@ -20,59 +20,70 @@ var books = []book.Book{
 		Cover:       "",
 		Genre:       "Realismo Mágico",
 	},
+}*/
+
+type bookRepository struct {
+	db *gorm.DB
 }
 
-func FindAll() []book.Book {
-	return books
+func InitBookRepository(db *gorm.DB) *bookRepository {
+	return &bookRepository{
+		db: db,
+	}
 }
 
-func FindById(id uuid.UUID) (book.Book, bool) {
-	for _, book := range books {
-		if book.ID == id {
-			return book, true
-		}
+func (repo *bookRepository) FindAll() ([]book.Book, error) {
+	var bookSlice []book.Book
+	result := repo.db.Find(&bookSlice)
+
+	if result.Error != nil {
+		return nil, result.Error
 	}
 
-	notFoundBook := book.Book{
-		ID:          uuid.Nil,
-		Title:       "",
-		Author:      "",
-		ISBN:        "",
-		Description: "",
-		Publisher:   "",
-		Published:   time.Now(),
-		Pages:       0,
-		Cover:       "",
-		Genre:       "",
-	}
-
-	return notFoundBook, false
+	return bookSlice, nil
 }
 
-func Create(newBook book.Book) bool {
-	books = append(books, newBook)
+func (repo *bookRepository) FindById(id uuid.UUID) (*book.Book, error) {
+	var bookToFind book.Book = book.Book{ID: id}
+	result := repo.db.First(&bookToFind)
 
-	return true
-}
-
-func Update(id uuid.UUID, updatedBook book.Book) bool {
-	for i, book := range books {
-		if id == book.ID {
-			books[i] = updatedBook
-			return true
-		}
+	if result.Error != nil {
+		return &book.Book{}, result.Error
 	}
 
-	return false
+	return &bookToFind, nil
 }
 
-func Delete(id uuid.UUID) bool {
-	for i, book := range books {
-		if id == book.ID {
-			books = append(books[:i], books[i+1:]...)
-			return true
-		}
+func (repo *bookRepository) Create(newBook *book.Book) error {
+	result := repo.db.Create(&newBook)
+
+	if result.Error != nil {
+		return result.Error
 	}
 
-	return false
+	return nil
+}
+
+func (repo *bookRepository) Update(updatedBook *book.Book) error {
+	bookToFind := book.Book{ID: updatedBook.ID}
+	if r := repo.db.First(&bookToFind); r.Error != nil {
+		return r.Error
+	}
+
+	result := repo.db.Save(&updatedBook)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
+func (repo *bookRepository) Delete(id uuid.UUID) error {
+	result := repo.db.Delete(&book.Book{}, id)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }

@@ -2,10 +2,11 @@ package config
 
 import (
 	"GoChallenge/internal/core/domain/entity/book"
+	"GoChallenge/internal/core/service/book_service"
+	"GoChallenge/internal/infrastructure/adapters/repositories/book_repository"
+	book_handler "GoChallenge/internal/infrastructure/entrypoints/handler/book"
 	"GoChallenge/internal/infrastructure/entrypoints/router"
-	"time"
 
-	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -17,7 +18,7 @@ func Init() {
 	}
 
 	db.AutoMigrate(&book.Book{})
-	db.Create(&book.Book{
+	/*db.Create(&book.Book{
 		ID:          uuid.New(),
 		Title:       "Pedro Paramo",
 		Author:      "Juan Rulfo",
@@ -28,9 +29,13 @@ func Init() {
 		Pages:       100,
 		Cover:       "",
 		Genre:       "Realismo Mágico",
-	})
+	})*/
 
-	router.Serve()
+	bookRepository := book_repository.InitBookRepository(db)
+	bookService := book_service.InitBookService(bookRepository)
+	bookHandler := book_handler.InitBookHandler(bookService)
+
+	router.Serve(bookHandler)
 }
 
 func dbconnect() (*gorm.DB, error) {
