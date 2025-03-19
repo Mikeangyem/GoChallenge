@@ -61,6 +61,11 @@ func (service *bookService) SaveBook(bookDTO *dto.BookDTO) error {
 }
 
 func (service *bookService) UpdateBook(id uuid.UUID, bookDTO *dto.BookDTO) error {
+	_, err := service.repository.FindById(id)
+	if err != nil {
+		return errors.New("book does not exists")
+	}
+
 	updatedBook := book.Book{
 		ID:          id,
 		Title:       bookDTO.Title,
@@ -78,7 +83,7 @@ func (service *bookService) UpdateBook(id uuid.UUID, bookDTO *dto.BookDTO) error
 		return nil
 	}
 
-	return errors.New("book does not exists")
+	return errors.New("internal error")
 }
 
 func (service *bookService) DeleteBook(id uuid.UUID) error {

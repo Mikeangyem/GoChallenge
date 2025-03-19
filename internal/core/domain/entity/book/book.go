@@ -7,14 +7,14 @@ import (
 )
 
 type Book struct {
-	ID          uuid.UUID `json:"id" validate:"required"`
-	Title       string    `json:"title" validate:"required"`
-	Author      string    `json:"author" validate:"required"`
-	ISBN        string    `json:"isbn"`
-	Description string    `json:"description"`
-	Publisher   string    `json:"publisher" validate:"required"`
-	Published   time.Time `json:"published" validate:"required"`
-	Pages       int       `json:"pages"`
-	Cover       string    `json:"cover"`
-	Genre       string    `json:"genre" validate:"required"`
+	ID          uuid.UUID `json:"id" validate:"required" gorm:"primaryKey"`
+	Title       string    `json:"title" validate:"required" gorm:"not null"`
+	Author      string    `json:"author" validate:"required" gorm:"not null"`
+	ISBN        string    `json:"isbn" gorm:"not null"`
+	Description string    `json:"description" gorm:"not null"`
+	Publisher   string    `json:"publisher" validate:"required" gorm:"not null"`
+	Published   time.Time `json:"published" validate:"required" gorm:"not null"`
+	Pages       int       `json:"pages" gorm:"not null"`
+	Cover       string    `json:"cover" gorm:"not null"`
+	Genre       string    `json:"genre" validate:"required" gorm:"not null"`
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
 
@@ -46,6 +47,12 @@ func (handler *BookHandler) Create(c *gin.Context) {
 		return
 	}
 
+	validate := validator.New()
+	if err := validate.Struct(newBook); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
+		return
+	}
+
 	if err := handler.service.SaveBook(&newBook); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, newBook)
 	} else {
@@ -56,6 +63,12 @@ func (handler *BookHandler) Create(c *gin.Context) {
 func (handler *BookHandler) Update(c *gin.Context) {
 	var bookDto dto.BookDTO
 	if err := c.BindJSON(&bookDto); err != nil {
+		return
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(bookDto); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
 		return
 	}
 

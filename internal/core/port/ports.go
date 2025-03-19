@@ -4,7 +4,6 @@ import (
 	"GoChallenge/internal/core/domain/entity/book"
 	"GoChallenge/internal/core/dto"
 
-	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
@@ -24,10 +23,10 @@ type BookServiceInterface interface {
 	DeleteBook(id uuid.UUID) error
 }
 
-type BookHandlerInterface interface {
+/*type BookHandlerInterface interface {
 	GetAll(c *gin.Context)
 	GetById(c *gin.Context)
 	Create(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
-}
+}*/

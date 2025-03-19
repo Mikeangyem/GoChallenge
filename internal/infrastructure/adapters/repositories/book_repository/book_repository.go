@@ -2,6 +2,7 @@ package book_repository
 
 import (
 	"GoChallenge/internal/core/domain/entity/book"
+	"errors"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -65,10 +66,10 @@ func (repo *bookRepository) Create(newBook *book.Book) error {
 }
 
 func (repo *bookRepository) Update(updatedBook *book.Book) error {
-	bookToFind := book.Book{ID: updatedBook.ID}
+	/*bookToFind := book.Book{ID: updatedBook.ID}
 	if r := repo.db.First(&bookToFind); r.Error != nil {
 		return r.Error
-	}
+	}*/
 
 	result := repo.db.Save(&updatedBook)
 	if result.Error != nil {
@@ -79,10 +80,14 @@ func (repo *bookRepository) Update(updatedBook *book.Book) error {
 }
 
 func (repo *bookRepository) Delete(id uuid.UUID) error {
-	result := repo.db.Delete(&book.Book{}, id)
+	result := repo.db.Delete(&book.Book{ID: id})
 
 	if result.Error != nil {
 		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return errors.New("not found")
 	}
 
 	return nil
