@@ -29,14 +29,14 @@ func (service *bookService) GetAllBooks() []book.Book {
 	return books
 }
 
-func (service *bookService) GetBookById(id uuid.UUID) (*book.Book, bool) {
+func (service *bookService) GetBookById(id uuid.UUID) (*dto.BookDTO, bool) {
 	b, err := service.repository.FindById(id)
 
 	if err != nil {
-		return &book.Book{}, false
+		return &dto.BookDTO{}, false
 	}
 
-	return b, true
+	return toDTO(b), true
 }
 
 func (service *bookService) SaveBook(bookDTO *dto.BookDTO) error {
@@ -92,4 +92,18 @@ func (service *bookService) DeleteBook(id uuid.UUID) error {
 	}
 
 	return errors.New("book does not exists")
+}
+
+func toDTO(book *book.Book) *dto.BookDTO {
+	return &dto.BookDTO{
+		Title:       book.Title,
+		Author:      book.Author,
+		ISBN:        book.ISBN,
+		Description: book.Description,
+		Publisher:   book.Publisher,
+		Published:   book.Published,
+		Pages:       book.Pages,
+		Cover:       book.Cover,
+		Genre:       book.Genre,
+	}
 }

@@ -17,16 +17,8 @@ type BookRepositoryInterface interface {
 
 type BookServiceInterface interface {
 	GetAllBooks() []book.Book
-	GetBookById(id uuid.UUID) (*book.Book, bool)
+	GetBookById(id uuid.UUID) (*dto.BookDTO, bool)
 	SaveBook(bookDTO *dto.BookDTO) error
 	UpdateBook(id uuid.UUID, bookDTO *dto.BookDTO) error
 	DeleteBook(id uuid.UUID) error
 }
-
-/*type BookHandlerInterface interface {
-	GetAll(c *gin.Context)
-	GetById(c *gin.Context)
-	Create(c *gin.Context)
-	Update(c *gin.Context)
-	Delete(c *gin.Context)
-}*/

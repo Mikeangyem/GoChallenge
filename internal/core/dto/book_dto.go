@@ -10,6 +10,6 @@ type BookDTO struct {
 	Publisher   string    `json:"publisher" validate:"required"`
 	Published   time.Time `json:"published" validate:"required"`
 	Pages       int       `json:"pages"`
-	Cover       string    `json:"cover"`
+	Cover       string    `json:"cover,omitempty"`
 	Genre       string    `json:"genre" validate:"required"`
 }

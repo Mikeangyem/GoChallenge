@@ -15,6 +15,6 @@ type Book struct {
 	Publisher   string    `json:"publisher" validate:"required" gorm:"not null"`
 	Published   time.Time `json:"published" validate:"required" gorm:"not null"`
 	Pages       int       `json:"pages" gorm:"not null"`
-	Cover       string    `json:"cover" gorm:"not null"`
+	Cover       string    `json:"cover,omitempty" gorm:"not null"`
 	Genre       string    `json:"genre" validate:"required" gorm:"not null"`
 }

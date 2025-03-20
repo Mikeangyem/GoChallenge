@@ -21,22 +21,22 @@ func InitBookHandler(service ports.BookServiceInterface) *BookHandler {
 }
 
 func (handler *BookHandler) GetAll(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, handler.service.GetAllBooks())
+	c.JSON(http.StatusOK, handler.service.GetAllBooks())
 }
 
 func (handler *BookHandler) GetById(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
 		return
 	}
 
 	book, wasFound := handler.service.GetBookById(id)
 
 	if wasFound {
-		c.IndentedJSON(http.StatusOK, book)
+		c.JSON(http.StatusOK, book)
 	} else {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "book not found"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "book not found"})
 	}
 }
 
@@ -49,14 +49,14 @@ func (handler *BookHandler) Create(c *gin.Context) {
 
 	validate := validator.New()
 	if err := validate.Struct(newBook); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
 		return
 	}
 
 	if err := handler.service.SaveBook(&newBook); err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, newBook)
+		c.JSON(http.StatusInternalServerError, newBook)
 	} else {
-		c.IndentedJSON(http.StatusCreated, newBook)
+		c.JSON(http.StatusCreated, newBook)
 	}
 }
 
@@ -68,7 +68,7 @@ func (handler *BookHandler) Update(c *gin.Context) {
 
 	validate := validator.New()
 	if err := validate.Struct(bookDto); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
 		return
 	}
 
@@ -79,22 +79,22 @@ func (handler *BookHandler) Update(c *gin.Context) {
 	}
 
 	if err := handler.service.UpdateBook(id, &bookDto); err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": err})
+		c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 	} else {
-		c.IndentedJSON(http.StatusOK, bookDto)
+		c.JSON(http.StatusOK, bookDto)
 	}
 }
 
 func (handler *BookHandler) Delete(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid book"})
 		return
 	}
 
 	if err := handler.service.DeleteBook(id); err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": err})
+		c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 	} else {
-		c.IndentedJSON(http.StatusOK, gin.H{"message": "book was deleted successfully"})
+		c.JSON(http.StatusOK, gin.H{"message": "book was deleted successfully"})
 	}
 }
